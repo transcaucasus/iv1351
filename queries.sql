@@ -1,23 +1,25 @@
 -- Number of lessons given per month during a specified year 
-SELECT
-    TO_CHAR(lesson.date, 'Mon') AS Month,
-    COUNT(lesson.lesson_id) AS Total,
-    COUNT(individual_lesson.lesson_id) AS Individual,
-    COUNT(group_lesson.lesson_id) AS Group,
-    COUNT(ensemble.lesson_id) AS Ensemble
-FROM
+CREATE MATERIALIZED VIEW MonthlyLessonSummary AS
+SELECT 
+    EXTRACT(YEAR FROM date) AS Year,
+    TO_CHAR(date, 'Month') AS month, 
+    (COUNT(DISTINCT individual_lesson.lesson_id) + COUNT(DISTINCT group_lesson.lesson_id) + COUNT(DISTINCT ensemble.lesson_id)) AS Total,
+    COUNT(DISTINCT individual_lesson.lesson_id) AS individual_lesson,
+    COUNT(DISTINCT group_lesson.lesson_id) AS group_lesson,
+    COUNT(DISTINCT ensemble.lesson_id) AS ensemble
+FROM 
     lesson
-LEFT JOIN individual_lesson ON lesson.lesson_id = individual_lesson.lesson_id
-LEFT JOIN group_lesson ON lesson.lesson_id = group_lesson.lesson_id
-LEFT JOIN ensemble ON lesson.lesson_id = ensemble.lesson_id
-WHERE
-    EXTRACT(YEAR FROM lesson.date) = 'enter year here'
-GROUP BY
-    TO_CHAR(lesson.date, 'Mon')
-ORDER BY
-    MIN(EXTRACT(MONTH FROM lesson.date));
-	
-	
+    LEFT JOIN individual_lesson ON lesson.lesson_id = individual_lesson.lesson_id
+    LEFT JOIN group_lesson ON lesson.lesson_id = group_lesson.lesson_id
+    LEFT JOIN ensemble ON lesson.lesson_id = ensemble.lesson_id
+WHERE 
+    EXTRACT(YEAR FROM date) = 2023 -- Change year here
+GROUP BY 
+    Year, month
+ORDER BY 
+    Year, month;
+
+
 	
 -- How many students there are with no sibling, with one sibling, with two siblings, etc. 
 SELECT
@@ -54,7 +56,6 @@ HAVING
   COUNT(*) > 2 -- Here we write the maximum number of lessons 
 ORDER BY
   "No of Lessons" DESC;
-
 
 
 -- List all ensembles held during the next week
