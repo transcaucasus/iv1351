@@ -59,6 +59,7 @@ ORDER BY
 
 
 -- List all ensembles held during the next week
+CREATE VIEW EnsembleAvailability AS
 SELECT
   TO_CHAR(l.date, 'Dy') AS "Day",
   e.genre AS "Genre",
@@ -87,3 +88,4 @@ GROUP BY
 ORDER BY
   l.date, 
   TO_CHAR(l.date, 'D');
+
