@@ -1,5 +1,5 @@
 -- Number of lessons given per month during a specified year 
-CREATE MATERIALIZED VIEW MonthlyLessonSummary AS
+CREATE MATERIALIZED VIEW monthly_lesson AS
 SELECT 
     EXTRACT(YEAR FROM date) AS Year,
     TO_CHAR(date, 'Month') AS month, 
@@ -22,6 +22,7 @@ ORDER BY
 
 	
 -- How many students there are with no sibling, with one sibling, with two siblings, etc. 
+CREATE MATERIALIZED VIEW student_sibling_table AS
 SELECT
     COALESCE(ss.sibling_count, 0) AS "No of Siblings",
     COUNT(*) AS "No of Students"
@@ -36,6 +37,7 @@ ORDER BY "No of Siblings";
 
 
 -- List ids and names of all instructors who has given more than a specific number of lessons during the current month.
+CREATE VIEW instructor_overwork AS
 SELECT
   ins.instructor_id,
   per.first_name,
@@ -59,7 +61,7 @@ ORDER BY
 
 
 -- List all ensembles held during the next week
-CREATE VIEW EnsembleAvailability AS
+CREATE VIEW ensemble_availability AS
 SELECT
   TO_CHAR(l.date, 'Dy') AS "Day",
   e.genre AS "Genre",
