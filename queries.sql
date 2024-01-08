@@ -1,8 +1,8 @@
--- Number of lessons given per month during a specified year 
 CREATE MATERIALIZED VIEW monthly_lesson AS
 SELECT 
     EXTRACT(YEAR FROM date) AS Year,
-    TO_CHAR(date, 'Month') AS month, 
+    TO_CHAR(date, 'Month') AS month,
+    EXTRACT(MONTH FROM date) AS month_number,
     (COUNT(DISTINCT individual_lesson.lesson_id) + COUNT(DISTINCT group_lesson.lesson_id) + COUNT(DISTINCT ensemble.lesson_id)) AS Total,
     COUNT(DISTINCT individual_lesson.lesson_id) AS individual_lesson,
     COUNT(DISTINCT group_lesson.lesson_id) AS group_lesson,
@@ -15,9 +15,9 @@ FROM
 WHERE 
     EXTRACT(YEAR FROM date) = 2023 -- Change year here
 GROUP BY 
-    Year, month
+    Year, month, month_number
 ORDER BY 
-    Year, month;
+    Year, month_number;
 
 
 	
